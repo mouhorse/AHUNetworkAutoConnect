@@ -10,7 +10,6 @@ set "USERIP=xxx.xxx.xxx.xxx"
 set "CHECK_HOST=www.baidu.com"
 
 set "LOGIN_URL=http://172.16.253.3:801/eportal/?c=Portal&a=login&callback=dr1003&login_method=1&user_account=%USERNAME%&user_password=%PASSWORD%&wlan_user_ip=%USERIP%" 
-REM&wlan_user_ipv6=&wlan_user_mac=000000000000&wlan_ac_ip=172.16.253.1&wlan_ac_name=&jsVersion=3.3.2&v=3363"
 
 :loop
 REM 检查网络连接（ping 1次，等待1秒）
