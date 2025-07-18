@@ -13,7 +13,7 @@ set "PASSWORD=校园网密码"
 echo.
 echo ===============================================
 echo.
-echo        校园网自动登录脚本  v1.0
+echo        校园网自动登录脚本  v1.1
 echo.
 echo   作者：mouhorse
 echo   功能：自动获取 IP 并登录校园网
@@ -34,8 +34,13 @@ set "LOGIN_BASE=http://172.16.253.3:801/eportal/?c=Portal&a=login&callback=dr100
 :loop
 set "USERIP="
 for /f "tokens=2 delims=:" %%i in ('ipconfig ^| findstr /c:"IPv4 Address" ^| findstr /v /c:"169.254"') do (
-    for /f "tokens=1 delims= " %%a in ("%%i") do set "USERIP=%%a"
+    for /f "tokens=1 delims= " %%a in ("%%i") do ( 
+        set "USERIP=%%a"  
+        goto :done
+    )
 )
+:done
+
 if "!USERIP!"=="" (
     echo [%date% %time%] 获取 IP 失败，10 秒后重试...
     timeout /t 10 >nul
