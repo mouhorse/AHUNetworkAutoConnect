@@ -13,7 +13,7 @@ set "PASSWORD=校园网密码"
 echo.
 echo ===============================================
 echo.
-echo        校园网自动登录脚本  v1.1
+echo        校园网自动登录脚本  v2.1
 echo.
 echo   作者：mouhorse
 echo   功能：自动获取 IP 并登录校园网
@@ -28,10 +28,13 @@ timeout /t 3 >nul
 
 
 
-set "CHECK_HOST=www.baidu.com"
+set "CHECK_HOST="
 set "LOGIN_BASE=http://172.16.253.3:801/eportal/?c=Portal&a=login&callback=dr1003&login_method=1"
 
+set COUNT=0  :: 初始化登录尝试计数器
+
 :loop
+:: 1. 重新获取 IPv4
 set "USERIP="
 for /f "tokens=2 delims=:" %%i in ('ipconfig ^| findstr /c:"IPv4 Address" ^| findstr /v /c:"169.254"') do (
     for /f "tokens=1 delims= " %%a in ("%%i") do ( 
@@ -47,16 +50,30 @@ if "!USERIP!"=="" (
     goto loop
 )
 
+:: 2. 根据IP动态设置CHECK_HOST
+for /f "tokens=1-4 delims=." %%a in ("!USERIP!") do (
+    set "CHECK_HOST=%%a.%%b.0.1"
+)
+
+:: 3. 拼登录 URL
 set "LOGIN_URL=!LOGIN_BASE!&user_account=!USERNAME!&user_password=!PASSWORD!&wlan_user_ip=!USERIP!"
 
-ping -n 1 -w 1000 %CHECK_HOST% >nul
+:: 4. 检测网络
+ping -n 1 -w 1000 !CHECK_HOST! >nul
 if errorlevel 1 (
-    echo [%date% %time%] 网络断开，尝试登录（IP=!USERIP!）...
+    set /a COUNT+=1
+    if !COUNT! gtr 10 (
+        echo [%date% %time%] 已尝试登录10次均失败，准备重启电脑...
+        timeout /t 5 >nul
+        shutdown /r /t 0
+        exit
+    )
+    echo [%date% %time%] 网络断开，尝试登录（IP=!USERIP!，网关=!CHECK_HOST!） 第!COUNT!次...
     curl -s "!LOGIN_URL!" >nul
     timeout /t 10 >nul
     goto loop
 ) else (
-    echo [%date% %time%] 网络正常，5 秒后关闭窗口...
+    echo [%date% %time%] 网络正常（网关=!CHECK_HOST!），5 秒后关闭窗口...
     timeout /t 5 >nul
     exit
 )
