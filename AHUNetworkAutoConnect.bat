@@ -3,33 +3,11 @@ chcp 65001 >nul
 setlocal enabledelayedexpansion
 
 :: ========== 用户配置 ==========
-set "USERNAME=校园网账号"
-set "PASSWORD=校园网密码"
-:: ==========================
-
-
-
-:: ========== 自我介绍 ==========
-echo.
-echo ===============================================
-echo.
-echo        校园网自动登录脚本  v2.1
-echo.
-echo   作者：mouhorse
-echo   功能：自动获取 IP 并登录校园网
-echo   提示：如需修改账号，请编辑脚本里的 USERNAME 和 PASSWORD
-echo.
-echo ===============================================
-echo.
-echo 正在启动，请稍候 3 秒...
-echo.
-timeout /t 3 >nul
-:: ===========================================
-
-
-
+set "USERNAME=账号"
+set "PASSWORD=密码"
 set "CHECK_HOST="
 set "LOGIN_BASE=http://172.16.253.3:801/eportal/?c=Portal&a=login&callback=dr1003&login_method=1"
+:: ==============================
 
 set COUNT=0  :: 初始化登录尝试计数器
 
